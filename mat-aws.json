@@ -2,30 +2,31 @@
   "_comment": "Build with `packer build ubuntu.json`",
   "builders": [
     {
-      "type": "vmware-vmx",
-      "headless": "{{ user `headless` }}",
-      "http_directory": "http",
-      "output_directory": "./_virtuals/mat-update.vmwarevm",
-      "shutdown_command": "echo '{{ user `ssh_password` }}'|sudo -S shutdown -P now",
-      "ssh_password": "{{ user `ssh_password` }}",
-      "ssh_username": "{{ user `ssh_username` }}",
-      "ssh_wait_timeout": "10000s",
-      "ssh_pty": false,
-      "tools_upload_flavor": "linux",
-      "source_path": "./_virtuals/mat.vmwarevm/mat.vmx",
-      "vm_name": "mat-vm",
-      "vmx_data": {
-        "memsize": "{{ user `memory` }}",
-        "numvcpus": "{{ user `cpus` }}"
-      }
+      "type": "amazon-ebs",
+      "region": "us-west-2",
+      "source_ami": "ami-06f2f779464715dc5",
+      "instance_type": "m4.xlarge",
+      "ssh_username": "mat",
+      "ami_name": "mat-{{isotime \"2006-01-02-1504\"}}",
+      "user_data_file": "aws/cloud-config.yaml",
+      "ami_groups": [
+        "all"
+      ],
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_type": "gp2",
+          "volume_size": "20",
+          "delete_on_termination": true
+        }
+      ]
     }
   ],
   "provisioners": [
     {
       "environment_vars": [
+        "DEBIAN_FRONTEND=noninteractive",
         "CLEANUP_PAUSE={{user `cleanup_pause`}}",
-        "DESKTOP={{user `desktop`}}",
-        "UPDATE={{user `update`}}",
         "SSH_USERNAME={{user `ssh_username`}}",
         "SSH_PASSWORD={{user `ssh_password`}}",
         "http_proxy={{user `http_proxy`}}",
@@ -33,13 +34,13 @@
         "ftp_proxy={{user `ftp_proxy`}}",
         "rsync_proxy={{user `rsync_proxy`}}",
         "no_proxy={{user `no_proxy`}}",
-        "MAT_VERSION={{user `mat_version`}}",
-        "DISTRO={{user `distro`}}"
+        "MAT_VERSION={{user `mat_version`}}"
       ],
       "execute_command": "echo '{{ user `ssh_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
       "scripts": [
-        "scripts/clean-saltstack.sh",
-        "scripts/fix-pyopenssl.sh"
+        "scripts/prepare.sh",
+        "scripts/update.sh",
+        "scripts/saltstack.sh"
       ],
       "type": "shell"
     },
@@ -47,14 +48,12 @@
       "type": "salt-masterless",
       "local_state_tree": "/mnt/tower/forensics/Forensics/Projects/mat/mat-salt",
       "skip_bootstrap": true,
-      "custom_state": "mat.dedicated",
-      "salt_call_args": "--state-output=terse"
+      "custom_state": "mat.addon",
+      "salt_call_args": "-l debug --state-output=terse"
     },
     {
       "environment_vars": [
         "CLEANUP_PAUSE={{user `cleanup_pause`}}",
-        "DESKTOP={{user `desktop`}}",
-        "UPDATE={{user `update`}}",
         "SSH_USERNAME={{user `ssh_username`}}",
         "SSH_PASSWORD={{user `ssh_password`}}",
         "http_proxy={{user `http_proxy`}}",
@@ -62,12 +61,11 @@
         "ftp_proxy={{user `ftp_proxy`}}",
         "rsync_proxy={{user `rsync_proxy`}}",
         "no_proxy={{user `no_proxy`}}",
-        "MAT_VERSION={{user `mat_version`}}",
-        "DISTRO={{user `distro`}}"
+        "MAT_VERSION={{user `mat_version`}}"
       ],
       "execute_command": "echo '{{ user `ssh_password` }}' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
       "scripts": [
-        "scripts/clean-saltstack.sh",
+        "scripts/cloud-config.sh",
         "scripts/minimize.sh",
         "scripts/cleanup.sh"
       ],
@@ -75,12 +73,11 @@
     }
   ],
   "variables": {
-    "headless": "false",
+    "headless": "true",
     "mat_version": "stable",
     "ssh_username": "mat",
     "ssh_password": "forensics",
     "hostname": "mat",
-    "distro": "focal",
     "cpus": "2",
     "memory": "2048",
     "cleanup_pause": "",

@@ -1,8 +1,10 @@
-[![Logo](https://digital-forensics.sans.org/images/sift.png)
+![Logo](https://digital-forensics.sans.org/images/sift.png)
 
 # SIFT Packer Scripts
 
 These scripts build out the community SIFT ova file.
+
+**Notice:** this is for advanced users, docs might not always be up-to-date.
 
 ## VMWare
 
@@ -43,7 +45,7 @@ packer build -only=vmware-vmx sift.json
 ```
 OR 
 ```bash
-make build
+make sift
 ```
 
 ### Update SIFT VM
@@ -63,4 +65,12 @@ make update
 This assumes you are on OSX with vmware fusion installed
 ```bash
 make export
+```
+
+## AWS
+
+Unlike the VMWare and desktop mode build, the AWS build is a server only. In this configuration we do not need to build any base or preflight images ahead of time.
+
+```bash
+make sift-aws
 ```
