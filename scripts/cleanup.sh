@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 # Remove VMWare Tools
-rm -rf /home/sansforensics/linux.iso
+rm -rf /home/mat/linux.iso
 
 # Remove Fonts that require License Agreement
 apt-get remove -y ttf-mscorefonts-installer

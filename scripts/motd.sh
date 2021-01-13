@@ -1,7 +1,7 @@
 #!/bin/bash -eux
 
 echo "==> Recording image generation date"
-date > /etc/sift_build_date
+date > /etc/mat_build_date
 
 echo "==> Customizing message of the day"
 MOTD_FILE=/etc/motd
