@@ -8,3 +8,7 @@ chmod 440 /etc/sudoers.d/mat
 if grep -q -E "^mesg n$" /root/.profile && sed -i "s/^mesg n$/tty -s \\&\\& mesg n/g" /root/.profile; then
   echo "==> Fixed stdin not being a tty."
 fi
+
+echo "==> Installing base requirements"
+export DEBIAN_FRONTEND=noninteractive
+apt-get -y -o "Dpkg::Options::=--force-confdef" -o "Dpkg::Options::=--force-confold" install wget gnupg

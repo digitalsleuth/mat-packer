@@ -5,14 +5,14 @@
       "type": "vmware-vmx",
       "headless": "{{ user `headless` }}",
       "http_directory": "http",
-      "output_directory": "./_virtuals/mat-{{ user `distro` }}.vmwarevm",
+      "output_directory": "./_virtuals/mat-{{ user `distro` }}",
       "shutdown_command": "echo '{{ user `ssh_password` }}'|sudo -S shutdown -P now",
       "ssh_password": "{{ user `ssh_password` }}",
       "ssh_username": "{{ user `ssh_username` }}",
       "ssh_wait_timeout": "10000s",
       "ssh_pty": false,
       "tools_upload_flavor": "linux",
-      "source_path": "./_virtuals/preflight-{{ user `distro` }}.vmwarevm/preflight.vmx",
+      "source_path": "./_virtuals/preflight-{{ user `distro` }}/preflight.vmx",
       "vm_name": "mat-vm",
       "vmx_data": {
         "memsize": "{{ user `memory` }}",
@@ -44,7 +44,7 @@
     },
     {
       "type": "salt-masterless",
-      "local_state_tree": "mat-salt",
+      "local_state_tree": "/mnt/mat",
       "skip_bootstrap": true,
       "custom_state": "mat.dedicated",
       "salt_call_args": "--state-output=terse"
@@ -78,7 +78,7 @@
     "hostname": "mat",
     "distro": "focal",
     "cpus": "2",
-    "memory": "2048",
+    "memory": "4096",
     "cleanup_pause": "",
     "locale": "en_US",
     "ftp_proxy": "{{env `ftp_proxy`}}",
@@ -86,7 +86,7 @@
     "https_proxy": "{{env `https_proxy`}}",
     "no_proxy": "{{env `no_proxy`}}",
     "rsync_proxy": "{{env `rsync_proxy`}}",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "virtualbox_guest_os_type": "Ubuntu_64",
     "vmware_guest_os_type": "ubuntu-64"
   }

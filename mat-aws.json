@@ -46,7 +46,7 @@
     },
     {
       "type": "salt-masterless",
-      "local_state_tree": "/mnt/tower/forensics/Forensics/Projects/mat/mat-salt",
+      "local_state_tree": "/mnt/mat",
       "skip_bootstrap": true,
       "custom_state": "mat.addon",
       "salt_call_args": "-l debug --state-output=terse"

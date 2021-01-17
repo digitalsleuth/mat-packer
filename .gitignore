@@ -2,3 +2,5 @@ archive
 _virtuals
 mat-salt
 .envrc
+packer_cache
+
